@@ -3,7 +3,8 @@
 #include<exception>
 #include <string>
 #define WCHAR wchar_t
-const int MaxMsgLength = 94;
+
+const int MAX_MSG_LENGETH = 94;
 
 class SystemError :public std::runtime_error {
 public:
@@ -17,8 +18,8 @@ private:
 
 inline std::wstring GetErrorMessageInContextWithErrorNumber()
 {
-	WCHAR errMsg[MaxMsgLength];
-	_wcserror_s(errMsg, MaxMsgLength, errno);
+	WCHAR errMsg[MAX_MSG_LENGETH];
+	_wcserror_s(errMsg, MAX_MSG_LENGETH, errno);
 	return errMsg;
 }
 

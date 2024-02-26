@@ -8,12 +8,13 @@
 #include "DuplicateKeyError.h"
 
 template<typename KeyType, typename ValueType>
-class KeyValueDatabase {
+class KeyValueDatabase final {
 public:
 
+    using MapType = std::unordered_map<KeyType, ValueType>;
     KeyValueDatabase() {
         try {
-            auto temp = std::make_unique<std::unordered_map<KeyType, ValueType>>();
+            auto temp = std::make_unique<MapType>();
             if (temp) {
                 database = std::move(temp);
             }
@@ -22,7 +23,10 @@ public:
             }
         }
         catch (SystemError& error) {
-            std::wcerr << "Exception encountered: " << error.get_message();
+            std::wcerr << L"SystemError encountered: " << error.get_message();
+        }
+        catch (std::exception& error) {
+            std::wcerr << error.what() << std::endl;
         }
     }
     
@@ -40,7 +44,7 @@ public:
         }
     }
 
-    inline void addValue(const KeyType& _key, const ValueType& _value) {
+    inline bool addValue(const KeyType& _key, const ValueType& _value) {
         try {
             if (database->find(_key) != database->end()) {
                 throw DuplicateKeyError();
@@ -49,13 +53,20 @@ public:
             { 
                 throw SystemError(GetErrorMessageInContextWithErrorNumber());
             }
+            return true;
         }
-        catch (DuplicateKeyError& e) {
-            std::wcerr<<e.wwhat();
+        catch (DuplicateKeyError& error){
+            std::wcerr<< error.wwhat();
+            return false;
         }
         catch (SystemError& error) {
-            std::wcerr << "Exception encountered: "<<error.get_message();
+            std::wcerr << L"Exception encountered: "<<error.get_message();
+            return false;
         }
+        catch (std::exception& error) {
+            std::cerr << error.what() << std::endl;
+        }
+        return false;
     }
 
     inline const ValueType retrieveValue(const KeyType& _key) const {
@@ -66,10 +77,18 @@ public:
             }
             return iter->second;
         }
-        catch (KeyNotFoundError& e) {
-            std::wcerr<<e.wwhat();
+        catch (KeyNotFoundError& error) {
+            std::wcerr << error.wwhat();
             return ValueType{};
         }
+        catch (std::exception& error) {
+            std::cerr << error.what() << std::endl;
+            return ValueType{};
+        }
+    }
+
+    inline long long size() {
+        return database->size();
     }
 
     //update entry, returning success:true, fail:false.
@@ -82,10 +101,13 @@ public:
             iter->second = _value;
             return true;
         }
-        catch (KeyNotFoundError& e) {
-            std::wcerr<<e.wwhat();
+        catch (KeyNotFoundError& error) {
+            std::wcerr << error.wwhat();
         }
- 
+        catch (std::exception& error) {
+            std::cerr << error.what() << std::endl;
+        }
+        return false;
     }
 
      //deleting entry, returning success:true, fail:false.
@@ -98,40 +120,31 @@ public:
             database->erase(_key);
             return true;
         }
-        catch (KeyNotFoundError& e) {
-            std::wcerr<<e.wwhat();
+        catch (KeyNotFoundError& error) {
+            std::wcerr<<error.wwhat();
             return false;
         }
+        catch (std::exception& error) {
+            std::cerr << error.what();
+        }
+        return false;
+    }
+ 
+    typename MapType::iterator begin() {
+        return database->begin();
     }
 
-    typename std::unordered_map<KeyType, ValueType>::iterator begin() {
-        if (database) {
-            return database->begin();
-        }
-        throw SystemError(GetErrorMessageInContextWithErrorNumber());
+    typename MapType::iterator begin() const {
+        return database->begin();
     }
 
-    typename std::unordered_map<KeyType, ValueType>::iterator begin() const {
-        if (database) {
-            return database->begin();
-        }
-        throw SystemError(GetErrorMessageInContextWithErrorNumber());
+    typename MapType::iterator end() {
+        return database->end();
     }
-
-    typename std::unordered_map<KeyType, ValueType>::iterator end() {
-        if (database) {
-            return database->end();
-        }
-        throw SystemError(GetErrorMessageInContextWithErrorNumber());
+    typename MapType::iterator end() const{
+        return database->end();
     }
-    typename std::unordered_map<KeyType, ValueType>::iterator end() const{
-        if (database) {
-            return database->end();
-        }
-        throw SystemError(GetErrorMessageInContextWithErrorNumber());
-    }
-
+    virtual ~KeyValueDatabase() = default;
 private:
-    std::unique_ptr<std::unordered_map<KeyType, ValueType>> database;
+    std::unique_ptr<MapType> database;
 };
-
