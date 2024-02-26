@@ -1,21 +1,17 @@
 #include<iostream>
+#include <ostream>
 #include<vector>
+#include<random>
 #include"keyValueDatabase.h"
-#include"IOHandler.h"
+#include"CSVFileHandler.h"
+#include"IFileHandler.h"
 
-int main() {
-    KeyValueDatabase<int,int> d1;
-    KeyValueDatabase<std::string, int> si1;
-    si1.addValue("abhay", 3469);
-    si1.addValue("abhay2", 3454);
-
-    std::wcout << si1.retrieveValue("abhay") << std::endl;;
-
-    si1.deleteEntry("abhay");
-    
-    std::wcout << si1.retrieveValue("abhay") << std::endl;
-
-
-
-    return 0;
+int main()
+{
+	KeyValueDatabase<int, int> db1{ {1,2},{3,4},{5,6} };
+	KeyValueDatabase<int, std::string>db2{ {1,"ram"},{2,"sham"} };
+	CSVFileHandler<int, int> fileHandler;
+	std::cout<<db1.size();
+	std::cout << "hello\n";
+	return 0;
 }

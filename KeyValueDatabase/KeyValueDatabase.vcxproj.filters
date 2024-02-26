@@ -21,13 +21,19 @@
     <ClInclude Include="SystemError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IOHandler.h">
+    <ClInclude Include="IFileHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyNotFoundError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ValueTypeError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVFileHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIOError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,5 +53,16 @@
     <ClCompile Include="ValueTypeError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileIOError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="temp.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="nameToid.csv">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
